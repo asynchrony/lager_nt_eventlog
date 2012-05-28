@@ -1,0 +1,13 @@
+%% -*- tab-width: 4;erlang-indent-level: 4;indent-tabs-mode: nil -*-
+%% ex: ft=erlang ts=4 sw=4 et
+{application, lager_nt_eventlog,
+ [
+  {description, "NT Event Log backend for Lager"},
+  {vsn, "0.1.0"},
+  {modules, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {registered, []}
+ ]}.

@@ -1,0 +1,9 @@
+deps/
+ebin/
+priv/lib/
+c_src/*.o
+c_src/EventLogCategories.*
+!c_src/EventLogCategories.mc
+c_src/*.bin
+
+
