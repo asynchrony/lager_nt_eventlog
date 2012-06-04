@@ -9,8 +9,9 @@
 -type error_tuple() :: {error,
                         SourceFile::string(),
                         SourceLine::integer(),
-                        ErrorCode::undefined | integer(),
+                        ErrorCode::integer(),
                         ErrorMessage:: string()}.
+-type handle() :: integer().
 
 on_load() ->
     Lib = filename:join([code:priv_dir(lager_nt_eventlog), "lib", "nt_eventlog"]),
@@ -26,11 +27,11 @@ on_load() ->
             Status
     end.
 
--spec(register_event_source(string()) -> integer() | error_tuple()).
+-spec(register_event_source(Source::string()) -> {ok, handle()} | error_tuple()).
 register_event_source(_Source) ->
     erlang:nif_error({nif_not_loaded, module, ?MODULE, line, ?LINE}).
 
--spec(report_event(integer(), integer(), string()) -> ok | error_tuple()).
+-spec(report_event(handle(), lager:log_level_number(), Message::string()) -> ok | error_tuple()).
 report_event(_Handle, _Priority, _Message) ->
     erlang:nif_error({nif_not_loaded, module, ?MODULE, line, ?LINE}).
 
