@@ -3,7 +3,7 @@
 {application, lager_nt_eventlog,
  [
   {description, "NT Event Log backend for Lager"},
-  {vsn, "0.1.0"},
+  {vsn, "0.9.0"},
   {modules, []},
   {applications, [
                   kernel,
