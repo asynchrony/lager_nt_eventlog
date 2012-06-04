@@ -14,7 +14,7 @@
 %% @private
 init([Source, Level]) ->
     case nt_eventlog:register_event_source(Source) of
-        Handle when is_integer(Handle) ->
+        {ok, Handle} ->
             {ok, #state{level=lager_util:level_to_num(Level),
                         handle = Handle}};
         Error ->
@@ -31,6 +31,7 @@ handle_call(_Request, State) ->
 
 %% @private
 handle_event({log, Level, {_Date, _Time}, [_LevelStr, Location, Message]}, #state{handle = Handle} = State) ->
+    io:format("~p:~p~n", [?FILE, ?LINE]),
     nt_eventlog:report_event(Handle, Level, lists:flatten([Location, Message])),
     {ok, State};
 handle_event(_Event, State) ->
