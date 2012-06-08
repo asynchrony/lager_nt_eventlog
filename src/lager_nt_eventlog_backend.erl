@@ -30,8 +30,8 @@ handle_call(_Request, State) ->
     {ok, ok, State}.
 
 %% @private
-handle_event({log, Level, {_Date, _Time}, [_LevelStr, Location, Message]}, #state{handle = Handle} = State) ->
-    io:format("~p:~p~n", [?FILE, ?LINE]),
+handle_event({log, Level, {_Date, _Time}, [_LevelStr, Location, Message]},
+    #state{handle = Handle, level = LogLevel} = State) when Level =< LogLevel ->
     nt_eventlog:report_event(Handle, Level, lists:flatten([Location, Message])),
     {ok, State};
 handle_event(_Event, State) ->
@@ -48,4 +48,3 @@ terminate(_Reason, #state{handle = Handle}) ->
 %% @private
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
-
