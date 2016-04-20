@@ -71,7 +71,7 @@ terminate(_Reason, #state{handle = Handle}) ->
 
 %% @private
 code_change("0.9.0", {state, Handle, Level}, _Extra) ->
-    {ok, #state{id = ?MODULE, handle = Handle, level = Level, format_config = lager_default_formatter, format_config = ?DEFAULT_FORMAT }};
+    {ok, #state{id = ?MODULE, handle = Handle, level = Level, formatter = lager_default_formatter, format_config = ?DEFAULT_FORMAT }};
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
