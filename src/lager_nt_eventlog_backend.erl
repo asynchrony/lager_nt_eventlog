@@ -4,10 +4,10 @@
 
 -behaviour(gen_event).
 
--export([init/1, handle_call/2, handle_event/2, handle_info/2, terminate/2,
-        code_change/3]).
+-export([init/1, handle_call/2, handle_event/2, handle_info/2, terminate/2, code_change/3]).
+-export([config_to_id/1]).
 
--record(state, {handle, level, formatter, format_config}).
+-record(state, {id, handle, level, formatter, format_config}).
 
 -define(DEFAULT_FORMAT, [{pid, ""}, {module, [{pid, ["@"], ""}, module, {function, [":", function], ""}, {line, [":",line], ""}], ""}, " ", message]).
 -include_lib("lager/include/lager.hrl").
@@ -18,7 +18,8 @@ init([Source, Level]) ->
 init([Source, Level, {Formatter, FormatterConfig}]) ->
     case nt_eventlog:register_event_source(Source) of
         {ok, Handle} ->
-            {ok, #state{level=lager_util:level_to_num(Level),
+            {ok, #state{id = {?MODULE, Source},
+                        level=lager_util:level_to_num(Level),
                         handle = Handle,
                         formatter = Formatter,
                         format_config = FormatterConfig}};
@@ -40,7 +41,7 @@ handle_event({log, Level, {_Date, _Time}, [_LevelStr, Location, Message]},
     nt_eventlog:report_event(Handle, Level, lists:flatten([Location, Message])),
     {ok, State};
 handle_event({log, Message}, #state{handle = Handle, level = Level, formatter = Formatter, format_config = FormatConfig} = State) ->
-    case lager_util:is_loggable(Message, Level, ?MODULE) of
+    case lager_util:is_loggable(Message, Level, State#state.id) of
         true ->
             nt_eventlog:report_event(Handle, Level, Formatter:format(Message, FormatConfig)),
             {ok, State};
@@ -60,6 +61,9 @@ terminate(_Reason, #state{handle = Handle}) ->
 
 %% @private
 code_change("0.9.0", {state, Handle, Level}, _Extra) ->
-    {ok, #state{handle = Handle, level = Level, format_config = lager_default_formatter, format_config = ?DEFAULT_FORMAT }};
+    {ok, #state{id = ?MODULE, handle = Handle, level = Level, format_config = lager_default_formatter, format_config = ?DEFAULT_FORMAT }};
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
+
+config_to_id([Source | _]) ->
+    {?MODULE, Source}.
