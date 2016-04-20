@@ -9,6 +9,7 @@
 
 -record(state, {handle, level}).
 
+-define(DEFAULT_FORMAT, [{pid, ""}, {module, [{pid, ["@"], ""}, module, {function, [":", function], ""}, {line, [":",line], ""}], ""}, " ", message]).
 -include_lib("lager/include/lager.hrl").
 
 %% @private
@@ -34,6 +35,14 @@ handle_event({log, Level, {_Date, _Time}, [_LevelStr, Location, Message]},
     #state{handle = Handle, level = LogLevel} = State) when Level =< LogLevel ->
     nt_eventlog:report_event(Handle, Level, lists:flatten([Location, Message])),
     {ok, State};
+handle_event({log, Message}, #state{handle = Handle, level=Level} = State) ->
+    case lager_util:is_loggable(Message, Level, ?MODULE) of
+        true ->
+            nt_eventlog:report_event(Handle, Level, lager_default_formatter:format(Message, ?DEFAULT_FORMAT)),
+            {ok, State};
+        false ->
+            {ok, State}
+    end;
 handle_event(_Event, State) ->
     {ok, State}.
 
