@@ -28,11 +28,13 @@
 {lager_nt_eventlog_backend, [Source, Level, {Formatter, FormatConfig}]}
 ```
   
-  `Formatter` is an atom of a module the implements `format/2` and `format/3` callbacks.
-  if a formatter is not specified, the `lager_default_formatter` will be used by default.
+  `Formatter` is an atom of a module that implements the `format(lager_msg:lager_msg(),list()) -> any()` callback.
   
-  `FormatConfig` is an iolist that the `Formatter` uses to construct the message.
-  if a formatter is not specified, the following is used to construct log messages similar to Lager 1.0
+  `FormatConfig` is an iolist of instructions that the `Formatter` uses to construct the message.
+  Refer to Lager's [documentation](https://github.com/basho/lager#custom-formatting) for specific options.
+  
+  When the formatter tuple is not specified, the module `lager_default_formatter` and the following format 
+  config will be used by default to construct log messages similar to Lager 1.0
   
 ```erlang
 [
