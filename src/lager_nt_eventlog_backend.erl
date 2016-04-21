@@ -80,22 +80,22 @@ config_to_id([Source | _]) ->
 
 %% @private
 parse_level(Level) ->
-    case parse_level(Level, 2) of
+    case parse_level_to_mask(Level) of
         {error, _} ->
-            parse_level(Level, 1);
+            parse_level_to_num(Level);
         Mask ->
             Mask
     end.
 
-parse_level(Level, 2) ->
+parse_level_to_mask(Level) ->
     try lager_util:config_to_mask(Level) of
         Res ->
             {ok, Res}
     catch
         _:_ ->
             {error, bad_log_level}
-    end;
-parse_level(Level, 1) ->
+    end.
+parse_level_to_num(Level) ->
     try lager_util:level_to_num(Level) of
         Res ->
             {ok, Res}
