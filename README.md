@@ -21,6 +21,32 @@
 {lager_nt_eventlog_backend, ["product", info]}
 ```
 
+## Custom Formatting
+  A custom formatter can be supplied via the configuration:
+  
+```erlang
+{lager_nt_eventlog_backend, [Source, Level, {Formatter, FormatConfig}]}
+```
+  
+  `Formatter` is an atom of a module the implements `format/2` and `format/3` callbacks.
+  if a formatter is not specified, the `lager_default_formatter` will be used by default.
+  
+  `FormatConfig` is an iolist that the `Formatter` uses to construct the message.
+  if a formatter is not specified, the following is used to construct log messages similar to Lager 1.0
+  
+```erlang
+[
+  {pid, ""},
+  {module, [
+    {pid, ["@"], ""},
+    module,
+    {function, [":", function], ""},
+    {line, [":",line], ""}], ""},
+  " ",
+  message
+]
+```
+
   Refer to Lager's documentation for futher information on configuring handlers.
 
 # THANKS
